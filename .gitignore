@@ -87,3 +87,15 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# eclipse stuff
+.project
+.pydevproject
+
+# virtualenv installation files (local)
+bin
+include
+pip-selfcheck.json
+
+# SQLite database
+db.sqlite3
