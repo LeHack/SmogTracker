@@ -14,7 +14,8 @@ Autorzy: Łukasz Hejnak, Piotr Skurski
 6. pip install Django==1.10.3
 7. dodaj nową domenę (np. smogtracker.pl) w /etc/hosts wskazującą na 127.0.0.100, np.
         sudo echo "127.0.0.100   smogtracker.pl" >> /etc/hosts
-8. python manage.py runserver smogtracker.pl:8000
-9. wejdź na smogtracker.pl:8000
-10. ???
-11. profit $$$
+8. python manage.py migrate
+9. python manage.py runserver smogtracker.pl:8000
+10. wejdź na smogtracker.pl:8000
+11. ???
+12. profit $$$
