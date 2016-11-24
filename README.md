@@ -4,7 +4,7 @@
 
 Autorzy: Łukasz Hejnak, Piotr Skurski
 
-## Instalacja (za pierwszym razem, potem tylko kroki 2, 4, 7 i 8):
+## Instalacja (za pierwszym razem, potem tylko kroki 3, 5, 8 i 9):
 0. Upewnij się, że masz python3 (3.4.3) oraz pip 7.1.0 zainstalowany (i skonfigurowany by używał python3)
 1. sudo pip install virtualenv
 2. git clone git@github.com:LeHack/SmogTracker
