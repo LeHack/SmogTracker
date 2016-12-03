@@ -99,3 +99,6 @@ pip-selfcheck.json
 
 # SQLite database
 db.sqlite3
+
+# Django static dir
+static-www

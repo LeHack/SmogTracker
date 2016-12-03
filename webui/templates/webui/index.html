@@ -1,0 +1,58 @@
+{% load staticfiles %}
+{% load getattr %}
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Smog Tracker</title>
+
+        <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.ico' %}"/>
+        <link rel="stylesheet" href="{% static 'styles/basic.css' %}">
+        <link rel="stylesheet" href="{% static 'styles/data.css' %}">
+    </head>
+
+    <body>
+    <h1>Smog Tracker</h1>
+    <form method="GET" action="">
+	    <p>Wybierz parametr: <select name="p" onChange="submit()">
+	        {% for entry in params %}
+	            <option value="{{ entry.name }}" {% if entry.name == selected %} selected="selected" {% endif %}>{{ entry.name }}</option>
+	        {% endfor %}
+	    </select>
+	    </p>
+    </form>
+{% if data %}
+    <table class="data">
+        <thead>
+            <tr>
+                <td class="timestamp">Czas pomiaru</td>
+                {% for st in stations %}
+	               <td class="station">{{ st.name }}</td>
+	            {% endfor %}
+            </tr>
+        </thead>
+    {% for entry in data %}
+        <tbody>
+	        <tr>
+	            <td>{{ entry.date }}</td>
+	            {% for st in stations %}
+	               <td class="measurement">
+	               {% with entry|getattr:st.name as val %}     
+		               {% if val != None %}
+	                       {{ val }} [µg]
+		               {% else %}
+		                   - 
+		               {% endif %}
+		               </td>
+	               {% endwith %}
+	            {% endfor %}
+	         </tr>
+         </tbody>
+    {% endfor %}
+    </table>
+{% else %}
+    <p>Brak dostępnych pomiarów.</p>
+{% endif %}
+    </body>
+</html>
