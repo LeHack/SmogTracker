@@ -48,8 +48,8 @@
 	            {% endfor %}
             </tr>
         </thead>
-    {% for entry in data %}
         <tbody>
+            {% for entry in data %}
 	        <tr>
 	            <td>{{ entry.date }}</td>
 	            {% for st in stations %}
@@ -64,8 +64,8 @@
 	               {% endwith %}
 	            {% endfor %}
 	         </tr>
+            {% endfor %}
          </tbody>
-    {% endfor %}
     </table>
 {% else %}
     <p>Brak dostępnych pomiarów.</p>
