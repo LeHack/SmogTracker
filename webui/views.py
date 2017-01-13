@@ -55,7 +55,12 @@ def index(request):
             parsed[entry.date] = {
                 'date': entry.date.strftime('%H:%M:%S'),
             }
-        parsed[entry.date][entry.station.name] = entry.value
+        norm = (entry.value * 100 / entry.type.norm)
+        parsed[entry.date][entry.station.name] = {
+            "raw"  : entry.value,
+            "norm" : ("%.02d") % (norm),
+            "class": get_class_for(norm),
+        }
 
     context = {
         'data': [parsed[date] for date in sorted(parsed.keys())],
@@ -63,3 +68,17 @@ def index(request):
         'stations': stations
     }
     return render(request, 'webui/index.html', context)
+
+
+def get_class_for(norm):
+    if (norm > 700):
+        cls = "alarm"
+    elif (norm > 400):
+        cls = "dangr" # danger is a bootstrap class, so I8E
+    elif (norm > 200):
+        cls = "warn"
+    elif (norm > 75):
+        cls = "notice"
+    else:
+        cls = "ok"
+    return cls

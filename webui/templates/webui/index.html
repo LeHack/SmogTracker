@@ -72,10 +72,10 @@
 	        <tr>
 	            <td>{{ entry.date }}</td>
 	            {% for st in stations %}
-	               <td class="measurement">
-	               {% with entry|getattr:st.name as val %}     
-		               {% if val != None %}
-	                       {{ val }} [µg]
+                   {% with entry|getattr:st.name as val %}
+	                   <td class="measurement {{ val.class }}">
+		               {% if val.raw != None %}
+	                       {{ val.norm }}% - {{ val.raw }} µg/m<sup>3</sup>
 		               {% else %}
 		                   - 
 		               {% endif %}

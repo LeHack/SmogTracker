@@ -44,3 +44,27 @@ div.dropdown {
 .table.table-striped tr:hover {
     background: rgb(255,255,255);
 }
+
+.table th, td {
+    text-align: center;
+}
+
+.measurement.ok {
+    color: rgb(0,90,0);
+}
+
+.measurement.notice {
+    color: rgb(95,95,50);
+}
+
+.measurement.warn {
+    color: rgb(229,91,5);
+}
+
+.measurement.dangr {
+    color: rgb(150,30,0);
+}
+
+.measurement.alarm {
+    color: rgb(50,0,0);
+}
