@@ -15,7 +15,7 @@ def index(request):
                 parsed[entry.date][entry.station.name] = entry.value
             else:
                 parsed[entry.date] = {
-                    'date': entry.date.strftime('%Y-%m-%d %H:%M:%S'),
+                    'date': entry.date.strftime('%H:%M:%S'),
                     entry.station.name: entry.value
                 }
 

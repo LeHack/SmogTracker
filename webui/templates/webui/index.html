@@ -9,26 +9,42 @@
 
         <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.ico' %}"/>
         <link rel="stylesheet" href="{% static 'styles/basic.css' %}">
-        <link rel="stylesheet" href="{% static 'styles/data.css' %}">
+        <link rel="stylesheet" href="{% static 'styles/list.css' %}">
+
+		<link rel="stylesheet" href="{% static 'bootstrap-3.3.7-dist/css/bootstrap.min.css' %}" crossorigin="anonymous">
+		<link rel="stylesheet" href="{% static 'bootstrap-3.3.7-dist/css/bootstrap-theme.min.css' %}" crossorigin="anonymous">
+        <script src="{% static 'js/jquery-3.1.1.js' %}" crossorigin="anonymous"></script>
+		<script src="{% static 'bootstrap-3.3.7-dist/js/bootstrap.min.js' %}" crossorigin="anonymous"></script>
     </head>
 
     <body>
-    <h1>Smog Tracker</h1>
-    <form method="GET" action="">
-	    <p>Wybierz parametr: <select name="p" onChange="submit()">
-	        {% for entry in params %}
-	            <option value="{{ entry.name }}" {% if entry.name == selected %} selected="selected" {% endif %}>{{ entry.name }}</option>
-	        {% endfor %}
-	    </select>
-	    </p>
-    </form>
+    <div class="jumbotron">
+        <h1>Smog Tracker</h1>
+        <p>Simple automated smog data aggregator.</p>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="dropdown">
+                <button id="dropdownMenu1" href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Rodzaj: {{ selected }} <span class="caret"></span></button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    {% for entry in params %}
+                        <li value="{{ entry.name }}" {% if entry.name == selected %} class="active" {% endif %}><a href="/?p={{ entry.name }}">{{ entry.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <button class="btn btn-default" role="button">Miejsce: Kraków<span class="caret"></span></button>
+            <button class="btn btn-default" role="button">Data: 2016-12-23<span class="caret"></span></button>
+            <button class="btn btn-default" role="button">Pobierz teraz</button>
+        </div>
+        <div class="col-md-6"></div>
+    </div>
 {% if data %}
-    <table class="data">
+    <table class="table table-striped">
         <thead>
             <tr>
-                <td class="timestamp">Czas pomiaru</td>
+                <th>Czas pomiaru</th>
                 {% for st in stations %}
-	               <td class="station">{{ st.name }}</td>
+	               <th>{{ st.name }}</th>
 	            {% endfor %}
             </tr>
         </thead>

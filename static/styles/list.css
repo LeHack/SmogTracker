@@ -1,0 +1,28 @@
+div.jumbotron {
+    padding-left: 10%;
+    background: url(../images/backdrop.png) center no-repeat;
+    padding-top: 2em;
+    padding-bottom: 2em;
+    margin: 0;
+    width: 100%;
+}
+.jumbotron h1 {
+    margin: 0;
+}
+
+div.row {
+    width: 100%;
+    margin: 0;
+    padding: .5em;
+    background: repeating-linear-gradient(
+        30deg,
+        #fff8df,
+        #fff8df 10px,
+        #efe8be 10px,
+        #efe8be 20px
+    );
+}
+div.dropdown {
+    text-align: center;
+    display: inline;
+}
