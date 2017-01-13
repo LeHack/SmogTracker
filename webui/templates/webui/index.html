@@ -7,34 +7,53 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Smog Tracker</title>
 
-        <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.ico' %}"/>
+        <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.ico' %}">
         <link rel="stylesheet" href="{% static 'styles/basic.css' %}">
-        <link rel="stylesheet" href="{% static 'styles/list.css' %}">
 
 		<link rel="stylesheet" href="{% static 'bootstrap-3.3.7-dist/css/bootstrap.min.css' %}" crossorigin="anonymous">
 		<link rel="stylesheet" href="{% static 'bootstrap-3.3.7-dist/css/bootstrap-theme.min.css' %}" crossorigin="anonymous">
         <script src="{% static 'js/jquery-3.1.1.js' %}" crossorigin="anonymous"></script>
 		<script src="{% static 'bootstrap-3.3.7-dist/js/bootstrap.min.js' %}" crossorigin="anonymous"></script>
+
+        <link rel="stylesheet" href="{% static 'styles/list.css' %}">
+        <script src="{% static 'js/list.js' %}"></script>
+
+        <link rel="stylesheet" href="{% static 'styles/pikaday.css' %}">
+        <script src="{% static 'js/moment.min.js' %}"></script>
+        <script src="{% static 'js/pikaday.js' %}"></script>
     </head>
 
     <body>
-    <div class="jumbotron">
+    <div class="jumbotron logo">
         <h1>Smog Tracker</h1>
         <p>Simple automated smog data aggregator.</p>
     </div>
+    <form id="data" action="/" enctype="multipart/form-data" method="POST">
+        {% csrf_token %}
+        {% for param, value in params.selected.items %}
+            <input type="hidden" name="{{ param }}" value="{{ value }}"/>
+        {% endfor %}
+    </form>
     <div class="row">
         <div class="col-md-6">
             <div class="dropdown">
-                <button id="dropdownMenu1" href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Rodzaj: {{ selected }} <span class="caret"></span></button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                    {% for entry in params %}
-                        <li value="{{ entry.name }}" {% if entry.name == selected %} class="active" {% endif %}><a href="/?p={{ entry.name }}">{{ entry.name }}</a></li>
+                <button id="dropdownPM" href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Rodzaj: {{ params.selected.pm }} <span class="caret"></span></button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownPM">
+                    {% for entry in params.available.pm %}
+                        <li value="{{ entry.name }}" {% if entry.name == params.selected.pm %} class="active" {% endif %}><a href="#" onClick="setAndSubmit('pm', '{{ entry.name }}');">{{ entry.name }}</a></li>
                     {% endfor %}
                 </ul>
             </div>
-            <button class="btn btn-default" role="button">Miejsce: Kraków<span class="caret"></span></button>
-            <button class="btn btn-default" role="button">Data: 2016-12-23<span class="caret"></span></button>
-            <button class="btn btn-default" role="button">Pobierz teraz</button>
+            <div class="dropdown">
+                <button id="dropdownArea" href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Miejsce: {{ params.selected.area }} <span class="caret"></span></button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownArea">
+                    {% for entry in params.available.area %}
+                        <li value="{{ entry.name }}" {% if entry.name == params.selected.area %} class="active" {% endif %}><a href="#" onClick="setAndSubmit('area', '{{ entry.name }}');">{{ entry.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <button id="selectDate" class="btn btn-default" role="button">Data: <span class="value">{{ params.selected.date }}</span><span class="caret"></span></button>
+            <button class="btn btn-default" role="button" onClick="alert('TODO')">Pobierz teraz</button>
         </div>
         <div class="col-md-6"></div>
     </div>
@@ -68,7 +87,22 @@
          </tbody>
     </table>
 {% else %}
-    <p>Brak dostępnych pomiarów.</p>
+    <div class="jumbotron message">
+        <h4>Brak danych dla wybranych parametrów.</h4>
+    </div>
 {% endif %}
+    <script>
+        var picker = new Pikaday({
+            events: [{date: new Date(2016,12,3), backgroundColor: '#000000', color: '#FFFFFF'}],
+            field: jQuery("#data input[name=date]").get(0),
+            trigger: jQuery("#selectDate").get(0),
+            format: 'YYYY-MM-DD',
+            minDate: new Date(2016,10,1),
+            maxDate: new Date(),
+            onSelect: function() {
+                setAndSubmit('date', this.getMoment().format('YYYY-MM-DD'));
+            }
+        });
+    </script>
     </body>
 </html>

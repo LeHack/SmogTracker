@@ -1,4 +1,8 @@
-div.jumbotron {
+body {
+    background-color: rgb(240,240,240);
+}
+
+div.jumbotron.logo {
     padding-left: 10%;
     background: url(../images/backdrop.png) center no-repeat;
     padding-top: 2em;
@@ -9,6 +13,10 @@ div.jumbotron {
 
 .jumbotron h1 {
     margin: 0;
+}
+
+div.jumbotron.message {
+    text-align: center;
 }
 
 div.row {
