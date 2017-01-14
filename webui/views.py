@@ -1,7 +1,10 @@
 from datetime import date
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.utils import dateparse
 from .models import Area, Measurement, Parameter, Station
+from gatherer.models import Gatherer
+from gatherer.service import Manager
 
 
 def index(request):
@@ -25,6 +28,8 @@ def index(request):
         temp = dateparse.parse_date(request.POST['date'])
         if temp is not None:
             day = temp
+        else:
+            day = date.today()
 
     params = {
         "available": {
@@ -68,6 +73,25 @@ def index(request):
         'stations': stations
     }
     return render(request, 'webui/index.html', context)
+
+
+def startDataRefresh(request):
+    # if there is no other process running
+    status = "busy"
+    if Manager.isReady():
+        Manager(run_by=Gatherer.UI).fireAndForget()
+        status = "started"
+
+    return JsonResponse({"refresh": status})
+
+
+def checkDataRefresh(request):
+    # if there is no other process running
+    status = "working"
+    if Manager.isReady():
+        status = "ready"
+
+    return JsonResponse({"refresh": status})
 
 
 def get_class_for(norm):

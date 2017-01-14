@@ -1,21 +1,19 @@
-import datetime
-import multiprocessing
-import pytz
+import datetime, json, multiprocessing, pytz, requests, subprocess
 
-from webui.models import Measurement, Parameter, Station, Parser, Area
-from pip._vendor.requests.packages.urllib3.util.url import Url
-
-"""pip install requests"""
-import requests
 from abc import ABC, abstractmethod
+from requests.packages.urllib3.util.url import Url
+
+from .models import Gatherer
+from smogtrac import settings
+from webui.models import Measurement, Parameter, Station, Parser, Area
 
 
 class AbstractWorker(ABC, multiprocessing.Process):
     json = ""
 
     def run(self):
-        self.json = self.consume()
-        self.process()
+#         self.json = self.consume()
+#         self.process()
         return
 
     @abstractmethod
@@ -27,57 +25,67 @@ class AbstractWorker(ABC, multiprocessing.Process):
         pass
 
 
-class ForecastWorker(AbstractWorker):
-    url = "http://powietrze.malopolska.pl/_powietrzeapi/api/dane?act=danemiasta&ci_id=1"  # Krakow
-    PARSER_NAME = "powietrze-malopolska"
-
-    def consume(self):
-        # todo: get url from database
-        req = requests.get(self.url)
-        if req.status_code == 200:
-            return req.json()
-        return ""
-
-    def process(self):
-        if not self.json:
-            return
-
-        station = self.__saveToDb__()
-
-        data = self.json["dane"]["forecast"]["dzisiaj"]["details"]
-        for record in data:
-            if record["fo_wskaznik"] == "pm10":
-                date = pytz.timezone('CET').localize(datetime.datetime.now())
-                Measurement(date=date, value=record["fo_wartosc"], station=station, type=Parameter.objects.get(name="PM10")).save()
-
-        return
-
-    def __saveToDb__(self):
-        try:
-            parserFromDb = Parser.objects.get(name=self.PARSER_NAME)
-            return Station.objects.get(parser=parserFromDb)
-        except Parser.DoesNotExist:
-            parser = Parser(name=self.PARSER_NAME)
-            parser.save()
-            area = Area.objects.get(name="Nowa Huta", city="Kraków")
-            station = Station(
-                name="Nowa Huta",
-                url=Url(self.url),
-                street="Bulwarowa",
-                area=area,
-                parser=parser
-            )
-            station.save()
-
-        return station
+def import_from(module, name):
+    module = __import__(module, fromlist=[name])
+    return getattr(module, name)
 
 
 class Manager:
-    workers = [
-        ForecastWorker()
-    ]
+    ''' Runs parsers and handles errors '''
+    run_by   = None
+    stations = None
+
+    def __init__(self, run_by = None, stations = None):
+        if stations:
+            self.stations = stations
+        else:
+            self.stations = Station.objects.all()
+
+        if run_by:
+            self.run_by = getattr(Gatherer, run_by)
 
     def run(self):
-        for worker in self.workers:
-            worker.start()
-            worker.join()
+        parsers = []
+
+        # create a WIP status in the DB
+        state = Gatherer(status = Gatherer.WORKING)
+        if self.run_by:
+            state.run_by = self.run_by
+        state.save()
+
+        # load a parser for every station and run them
+        for station in self.stations:
+            module = import_from('gatherer.parsers.%s' % (station.parser.name), station.code)
+            parser = module()
+            parser.start()
+            parsers.append(parser)
+
+        for parser in parsers:
+            parser.join()
+
+        # update state, to indicate we're done
+        state.status = Gatherer.READY
+        state.save()
+
+    def fireAndForget(self):
+        params = [
+            settings.BASE_DIR + '/scripts/manager.py'
+        ]
+
+        if self.run_by:
+            params.append('--run_by')
+            params.append(self.run_by)
+
+        if self.stations:
+            params.append('--stations')
+            params.append(json.dumps([s.code for s in self.stations]))
+
+        # we run ourselves from an external script, which will be detached from our caller
+        subprocess.Popen(params)
+
+    @staticmethod
+    def isReady():
+        result = None
+        if Gatherer.objects.count() > 0:
+            result = (Gatherer.objects.latest('start_time').status == Gatherer.READY)
+        return result

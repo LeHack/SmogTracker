@@ -11,7 +11,7 @@ Autorzy: Łukasz Hejnak, Piotr Skurski
 3. cd SmogTracker
 4. virtualenv .
 5. source bin/activate
-6. pip install Django==1.10.3 pytz
+6. pip install Django==1.10.3 pytz==2016.7 requests==2.12.4
 7. dodaj nową domenę (np. smogtracker.pl) w /etc/hosts wskazującą na 127.0.0.100, np.
         sudo echo "127.0.0.100   smogtracker.pl" >> /etc/hosts
 8. python manage.py migrate

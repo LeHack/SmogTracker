@@ -1,5 +1,5 @@
-from django.utils import timezone
 from django.db import models
+from django.utils import timezone
 
 
 class Area(models.Model):
@@ -16,6 +16,7 @@ class Area(models.Model):
 
 class Parser(models.Model):
     name = models.CharField('nazwa', max_length=100)
+    url  = models.URLField('adres zasobu')
 
     def __str__(self):
         return self.name
@@ -25,9 +26,9 @@ class Station(models.Model):
     name    = models.CharField('nazwa', max_length=100)
     street  = models.CharField('ulica', max_length=100)
     added   = models.DateField('data dodania', default=timezone.now)
-    url     = models.URLField('adres zasobu')
     area    = models.ForeignKey(Area, related_name='stations')
     parser  = models.ForeignKey(Parser, related_name='stations')
+    code    = models.CharField('identyfikator', max_length=100)
 
     class Meta:
         verbose_name = "stacja"

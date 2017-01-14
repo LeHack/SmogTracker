@@ -2,8 +2,9 @@ import datetime
 import pytz
 
 from django.test import TestCase
+from requests.packages.urllib3.util.url import Url
+
 from .models import Station, Measurement, Parameter, Area, Parser
-from pip._vendor.requests.packages.urllib3.util.url import Url
 
 
 class MeasurementMockup(TestCase):
@@ -11,7 +12,6 @@ class MeasurementMockup(TestCase):
     def createMeta(self):
         # Start by flushing the current data
         Area.objects.all().delete()
-        Station.objects.all().delete()
         Parameter.objects.all().delete()
         Parser.objects.all().delete()
 
@@ -24,13 +24,13 @@ class MeasurementMockup(TestCase):
         a_ku.save()
 
         # Default parser
-        wios = Parser(name="WIOS")
+        wios = Parser(name="wios_krakow", url=Url("http://monitoring.krakow.pios.gov.pl/dane-pomiarowe/automatyczne"))
         wios.save()
 
         # Stations
         Station(
             name="Kurdwanów",
-            url=Url("http://monitoring.krakow.pios.gov.pl/dane-pomiarowe/automatyczne"),
+            code="Kurdwanow",
             street="Bujaka",
             area=a_ku,
             parser=wios
@@ -38,7 +38,7 @@ class MeasurementMockup(TestCase):
 
         Station(
             name="Nowa Huta",
-            url=Url("http://monitoring.krakow.pios.gov.pl/dane-pomiarowe/automatyczne"),
+            code="NowaHuta",
             street="Bulwarowa",
             area=a_nh,
             parser=wios
@@ -46,7 +46,7 @@ class MeasurementMockup(TestCase):
 
         Station(
             name="Aleja Krasińskiego",
-            url=Url("http://monitoring.krakow.pios.gov.pl/dane-pomiarowe/automatyczne"),
+            code="Krasinskiego",
             street="Aleja Krasińskiego",
             area=a_ce,
             parser=wios

@@ -19,5 +19,7 @@ from webui import views
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
+    url(r'^rest/refresh/start$', views.startDataRefresh, name='start_refresh'),
+    url(r'^rest/refresh/check$', views.checkDataRefresh, name='check_refresh'),
     url(r'^admin/', admin.site.urls),
 ]
