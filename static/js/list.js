@@ -9,8 +9,8 @@ var Refresh = (function() {
     let running = false;
     function Refresh(){}
 
-    Refresh.prototype.start = function(handler) {
-        window.fetch('/rest/refresh/start').then(function(response){
+    Refresh.prototype.start = function(handler, area, param) {
+        window.fetch('/rest/refresh/start/' + area + '/' + param).then(function(response){
             if (response.status !== 200) {
                 throw reponse;
             }
@@ -36,7 +36,6 @@ var Refresh = (function() {
 
 function runRefresh(elem) {
     let jElem = jQuery(elem);
-
     let r = new Refresh();
     let orgText = jElem.text();
     let handler = function(data) {
@@ -57,7 +56,11 @@ function runRefresh(elem) {
             console.log("Incorrect status received: ", data);
         }
     }
-    r.start(handler);
+
+    let form    = jQuery("#data");
+    let area    = form.find("input[name=area]").val()
+    let pm_type = form.find("input[name=pm]").val()
+    r.start(handler, area, pm_type);
 
     return elem.blur();
 }

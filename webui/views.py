@@ -62,7 +62,7 @@ def index(request):
             }
         norm = (entry.value * 100 / entry.type.norm)
         parsed[entry.date][entry.station.name] = {
-            "raw"  : entry.value,
+            "raw"  : int(entry.value),
             "norm" : ("%.02d") % (norm),
             "class": get_class_for(norm),
         }
@@ -75,11 +75,12 @@ def index(request):
     return render(request, 'webui/index.html', context)
 
 
-def startDataRefresh(request):
+def startDataRefresh(request, area, pm_type):
     # if there is no other process running
     status = "busy"
+    stations = Station.objects.filter(area=Area.objects.get(name=area)).all() if area != 'dowolne' else None
     if Manager.isReady():
-        Manager(run_by=Gatherer.UI).fireAndForget()
+        Manager(pm_type=pm_type.lower(), stations=stations, run_by=Gatherer.UI).fireAndForget()
         status = "started"
 
     return JsonResponse({"refresh": status})

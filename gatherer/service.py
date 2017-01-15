@@ -12,8 +12,8 @@ class AbstractWorker(ABC, multiprocessing.Process):
     json = ""
 
     def run(self):
-#         self.json = self.consume()
-#         self.process()
+        self.json = self.consume()
+        self.process()
         return
 
     @abstractmethod
@@ -34,8 +34,12 @@ class Manager:
     ''' Runs parsers and handles errors '''
     run_by   = None
     stations = None
+    pm_type  = None
+    day      = None
 
-    def __init__(self, run_by = None, stations = None):
+    def __init__(self, pm_type, day = datetime.date.today(), run_by = None, stations = None):
+        self.pm_type = pm_type
+        self.day     = day
         if stations:
             self.stations = stations
         else:
@@ -56,7 +60,7 @@ class Manager:
         # load a parser for every station and run them
         for station in self.stations:
             module = import_from('gatherer.parsers.%s' % (station.parser.name), station.code)
-            parser = module()
+            parser = module(self.pm_type, self.day, station)
             parser.start()
             parsers.append(parser)
 
@@ -69,7 +73,8 @@ class Manager:
 
     def fireAndForget(self):
         params = [
-            settings.BASE_DIR + '/scripts/manager.py'
+            settings.BASE_DIR + '/scripts/manager.py',
+            '--pm_type', self.pm_type
         ]
 
         if self.run_by:

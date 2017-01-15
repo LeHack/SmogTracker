@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import django, json, os, sys
+import datetime,django, json, os, sys
 
 # load django context and settings, so we can use gatherer below
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../")
@@ -20,16 +20,25 @@ def main(argv=None):
     try:
         # setup option parser
         parser = OptionParser()
+        parser.add_option("--pm_type", dest="pm_type", help="Which parameters to fetch (Required)")
         parser.add_option("--run_by", dest="run_by", help="Internal param stating runner (defaults to Cron)")
         parser.add_option("--stations", dest="stations", help="JSON serialized list of station codes (defaults to all stations)")
+        parser.add_option("--date", dest="date", help="Fetch data for this day (defaults to today)")
 
         # set defaults
-        parser.set_defaults(run_by=None, stations=None)
+        parser.set_defaults()
 
         # process options
         (opts, args) = parser.parse_args(argv)
         
-        params = {}
+        if not opts.pm_type:
+            raise Exception("Missing pm_type parameter")
+
+        params = {
+            "pm_type": opts.pm_type
+        }
+        if opts.date:
+            params["day"] = datetime.datetime.strptime(opts.date, '%Y-%m-%d')
         if opts.run_by:
             params["run_by"] = opts.run_by
         if opts.stations:

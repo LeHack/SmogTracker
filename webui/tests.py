@@ -24,7 +24,7 @@ class MeasurementMockup(TestCase):
         a_ku.save()
 
         # Default parser
-        wios = Parser(name="wios_krakow", url=Url("http://monitoring.krakow.pios.gov.pl/dane-pomiarowe/automatyczne"))
+        wios = Parser(name="wios_krakow", url="http://monitoring.krakow.pios.gov.pl/dane-pomiarowe/pobierz")
         wios.save()
 
         # Stations

@@ -48,7 +48,7 @@
                 <button id="dropdownArea" href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Miejsce: {{ params.selected.area }} <span class="caret"></span></button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownArea">
                     {% for entry in params.available.area %}
-                        <li value="{{ entry.name }}" {% if entry.name == params.selected.area %} class="active" {% endif %}><a href="#" onClick="setAndSubmit('area', '{{ entry.name }}');">{{ entry.name }}</a></li>
+                        <li {% if entry.name == params.selected.area %} class="active" {% endif %}><a href="#" onClick="setAndSubmit('area', '{{ entry.name }}');">{{ entry.name }}</a></li>
                     {% endfor %}
                 </ul>
             </div>
@@ -97,6 +97,7 @@
             field: jQuery("#data input[name=date]").get(0),
             trigger: jQuery("#selectDate").get(0),
             format: 'YYYY-MM-DD',
+            firstDay: 1,
             minDate: new Date(2016,10,1),
             maxDate: new Date(),
             onSelect: function() {
