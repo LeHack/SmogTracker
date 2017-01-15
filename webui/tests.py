@@ -60,7 +60,7 @@ class MeasurementMockup(TestCase):
         ).save()
 
         Parameter(
-            name="PM2,5",
+            name="PM2.5",
             description="Pył zawieszony jest mieszaniną niezwykle małych cząstek. Pyłem zawieszonym PM2,5 są wszystkie cząstki mniejsze niż 2,5µm. Zanieczyszczenia pyłowe mogą osiągać różne rozmiary oraz kształty. Ponadto posiadają zdolność do adsorpcji na swojej powierzchni innych, bardzo szkodliwych zanieczyszczeń (dioksyn i furanów, metali ciężkich, czy wielopierścieniowych węglowodorów aromatycznych – m.in. benzo(a)pirenu). Pyły zawieszone przede wszystkim emitowane są bezpośrednio a takich źródeł jak pożary, unoszenia się pyłu z palców budów, dróg niepokrytych asfaltem, procesów spalania.",
             norm=25
         ).save()
