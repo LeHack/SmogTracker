@@ -23,7 +23,7 @@ def index(request):
     for a in Area.objects.all():
         areas.append(a)
 
-    day = Measurement.objects.last().date
+    day = Measurement.objects.latest('date').date
     if 'date' in request.POST:
         temp = dateparse.parse_date(request.POST['date'])
         if temp is not None:
